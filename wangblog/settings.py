@@ -126,3 +126,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+#所有应用公共的静态文件的路径
+# STATICFILES_DIRS = (
+#     os.path.join(BASE_DIR, "statiac"),#app共有的静态文件，比如：jqurey.js
+# )
