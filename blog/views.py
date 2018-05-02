@@ -1,6 +1,6 @@
 from django.shortcuts import render,get_object_or_404
 from django.http import HttpResponse
-from blog.models import Post
+from blog.models import Post,Category
 import markdown
 
 
@@ -23,3 +23,20 @@ def detail(request, pk):
     return render(request,'blog/detail.html', context={
         'post': post
     })
+
+
+#归档
+def archives(request, year, month):
+    post_list = Post.objects.filter(created_time__year=year,
+                                    created_time__month=month
+                                    ).order_by('-created_time')
+    return render(request, 'blog/index.html', context={
+        'post_list': post_list
+    })
+
+
+#分类
+def category(request, pk):
+    cate = get_object_or_404(Category, pk=pk)#根据传入的 pk 值（也就是被访问的分类的 id 值）从数据库中获取到这个分类
+    post_list = Post.objects.filter(category=cate).order_by('-created_time')
+    return render(request, 'blog/index.html',context={'post_list': post_list})
