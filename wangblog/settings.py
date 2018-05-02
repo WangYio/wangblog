@@ -33,6 +33,7 @@ ALLOWED_HOSTS = ['wangyio.free.ngrok.cc','127.0.0.1']
 # Application definition
 
 INSTALLED_APPS = [
+    'comments',
     'blog',
     'django.contrib.admin',
     'django.contrib.auth',
