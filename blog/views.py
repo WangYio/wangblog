@@ -1,6 +1,6 @@
 from django.shortcuts import render,get_object_or_404
 from django.http import HttpResponse
-from blog.models import Post, Category
+from blog.models import Post, Category,Tag
 from comments.forms import CommentForm
 from django.views.generic import ListView,DetailView
 import markdown
@@ -223,6 +223,13 @@ class ArchivesView(IndexView):
         month = self.kwargs.get('month')
         return super(ArchivesView, self).get_queryset().filter(created_time__year=year,
                                     created_time__month=month)
+
+
+class TagView(IndexView):
+    def get_queryset(self):
+        tag = get_object_or_404(Tag, pk=self.kwargs.get('pk'))
+        return super(TagView, self).get_queryset().filter(tags=tag)
+
 
 
 
