@@ -4,6 +4,8 @@ from blog.models import Post, Category,Tag
 from comments.forms import CommentForm
 from django.views.generic import ListView,DetailView
 import markdown
+from django.utils.text import slugify
+from markdown.extensions.toc import TocExtension
 
 
 # def index(request):
@@ -185,12 +187,15 @@ class PostDetailView(DetailView):
 
     def get_object(self, queryset=None):
         post = super(PostDetailView, self).get_object(queryset=None)
-        post.body = markdown.markdown(post.body,
+        md = markdown.Markdown(
                                       extensions=[
                                           'markdown.extensions.extra',
                                           'markdown.extensions.codehilite',
                                           'markdown.extensions.toc',
+                                          TocExtension(slugify=slugify),
                                       ])
+        post.body = md.convert(post.body)
+        post.toc = md.toc
         return post
 
     def get_context_data(self, **kwargs):
