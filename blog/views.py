@@ -6,7 +6,7 @@ from django.views.generic import ListView,DetailView
 import markdown
 from django.utils.text import slugify
 from markdown.extensions.toc import TocExtension
-
+from django.db.models import Q #Q 对象用于包装查询表达式
 
 # def index(request):
 #     post_list = Post.objects.all().order_by('-created_time')
@@ -209,9 +209,6 @@ class PostDetailView(DetailView):
         return context
 
 
-
-
-
 #归档
 # def archives(request, year, month):
 #     post_list = Post.objects.filter(created_time__year=year,
@@ -236,10 +233,6 @@ class TagView(IndexView):
         return super(TagView, self).get_queryset().filter(tags=tag)
 
 
-
-
-
-
 #分类
 # def category(request, pk):
 #     cate = get_object_or_404(Category, pk=pk)#根据传入的 pk 值（也就是被访问的分类的 id 值）从数据库中获取到这个分类
@@ -249,3 +242,14 @@ class CategoryView(IndexView): #直接继承IndexView
     def get_queryset(self):  #该方法默认获取指定模型的全部列表数据
         cate = get_object_or_404(Category, pk=self.kwargs.get('pk'))
         return super(CategoryView, self).get_queryset().filter(category=cate)
+
+
+def search(request):
+    q = request.GET.get('q') # get 方法提交的数据保存在 request.GET 里使用 get 方法从字典里取出键 q 对应的值，即用户的搜索关键词。这里字典的键之所以叫 q 是因为我们的表单中搜索框 input 的 name 属性的值是 q
+    error_msg = ''
+
+    if not q:
+        error_msg = "请输入要搜索的关键词"
+        return render(request,'blog/index.html',{'error_msg':error_msg})
+    post_list = Post.objects.filter(Q(title__icontains=q)| Q(body__contains=q))
+    return render(request, 'blog/index.html', {'error_msg':error_msg,'post_list': post_list})
